@@ -1,13 +1,40 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 
 const Post = () => {
-  const {id} = useParams();
-  console.log(id);
+  const [post, setPost] = useState(null);
+  const [id, setId] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      setLoading(true);
+      const res = await fetch(
+        `https://jsonplaceholder.typicode.com/posts/${id}?_delay=3000`
+      );
+      const data = await res.json();
+      setLoading(false);
+      setPost(data);
+    };
+    if (id !== '') fetchPosts();
+  }, [id]);
   return (
-    <div>
-      <h1>Post_{id}_</h1>
-    </div>
+    <>
+      <div>
+        <label htmlFor="id">Post Id</label>
+        <input
+          id="id"
+          name="id"
+          type="text"
+          value={id}
+          onChange={(e) => setId(e.target.value)}
+        ></input>
+        {loading ? (
+          <p>loading post...</p>
+        ) : (
+          <ul>{post && JSON.stringify(post)}</ul>
+        )}
+      </div>
+    </>
   );
 };
 

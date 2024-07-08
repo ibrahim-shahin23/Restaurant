@@ -18,14 +18,23 @@ const Navbar = (props) => {
               </Link>
             </li>
             <li className="nav-item">
-              to
               <Link className="nav-link" to="/cart">
                 Cart
               </Link>
             </li>
             <li className="nav-item">
+              <Link className="nav-link" to="/login">
+                Login
+              </Link>
+            </li>
+            <li className="nav-item">
               <Link className="nav-link" to="/dashboard">
                 dashboard
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/admin">
+                Admin
               </Link>
             </li>
           </ul>

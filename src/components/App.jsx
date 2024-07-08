@@ -1,9 +1,6 @@
-import React, { useState } from 'react';
-import {
-  BrowserRouter,
-  Route,
-  Routes,
-} from 'react-router-dom';
+import React, {createContext, useEffect, useState } from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import axios from 'axios';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import ShoppingCart from './Shoppingcart';
 import Navbar from './navbar';
@@ -14,21 +11,43 @@ import Admin from './Admin';
 import Users from './Users';
 import DashboardLayout from '../layout/DashboardLayout';
 import Post from './Post';
+import Login from './Login';
+import ProductForm from './ProductForm';
+import { ToastContainer, toast } from 'react-toastify';
+
+export const ProductsContext = createContext(null)
 
 const App = () => {
   const [state, setState] = useState({
-    products: [
-      { id: 1, name: 'Burger', price: 65, count: 0, isInCart: false },
-      { id: 2, name: 'Fries', price: 35, count: 0, isInCart: false },
-      { id: 3, name: 'Cola', price: 15, count: 0, isInCart: false },
-    ],
+    products: [],
   });
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data } = await axios.get('http://localhost:3000/products');
+      setState({ products: data });
+    };
+    fetchData();
+  }, []);
+
   const handleCartChange = (product) => {
     const products = [...state.products];
     const index = products.indexOf(product);
-    products[index] = {...products[index] };
+    products[index] = { ...products[index] };
     products[index].isInCart = !products[index].isInCart;
     setState({ products });
+  };
+  const handleDelete = async (product) => {
+    const oldProducts = [...state.products];
+    setState((prevState) => ({
+      products: prevState.products.filter((p) => p.id !== product.id),
+    }));
+    try {
+      await axios.delete('http://localhost:3000/products/' + product.id);
+      toast.warning("product deleted successfully")
+    } catch {
+      toast.error("deleting failed")
+      setState({products:oldProducts})
+    }
   };
   const resetHandler = () => {
     let products = [...state.products];
@@ -52,25 +71,52 @@ const App = () => {
     if (products[index].count > 0) products[index].count--;
     setState({ products });
   };
-  console.log(state);
- 
 
   return (
+    <ProductsContext.Provider value={state.products}>
     <BrowserRouter>
-      <Navbar productCount={state.products.filter((p) => p.count > 0).length} />
+    <ToastContainer position='top-center'/>
+      <Navbar
+        productCount={
+          state.products.filter((product) => product.count > 0).length
+        }
+      />
       <Routes>
-      <Route path="/" element={<RootLayout />}>
-        <Route path="/" element={<Home handleCart={handleCartChange} products={state.products} />} />
-        <Route path="/post/:id" element={<Post />} />
-        <Route path="cart" element={<ShoppingCart products={state.products} onDelete={handleCartChange} onIncrement={incrementHandler} onDecrement={decrementHandler} onReset={resetHandler}/>} />
-        <Route path="/dashboard" element={<DashboardLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="users" element={<Users />} />
-          <Route path="admin" element={<Admin />} />
+        <Route path="/" element={<RootLayout />}>
+          <Route
+            path="/"
+            element={
+              <Home handleCart={handleCartChange} />
+            }
+          />
+          <Route path="/post" element={<Post />} />
+          <Route
+            path="cart"
+            element={
+              <ShoppingCart
+                onDelete={handleCartChange}
+                onIncrement={incrementHandler}
+                onDecrement={decrementHandler}
+                onReset={resetHandler}
+              />
+            }
+          />
+          <Route path="login" element={<Login />} />
+          <Route path="/dashboard" element={<DashboardLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="users" element={<Users />} />
+          </Route>
+          <Route
+            path="admin"
+            element={
+              <Admin onDelete={handleDelete} />
+            }
+          />
+          <Route path="productform/:id" element={<ProductForm />} />
         </Route>
-      </Route>
       </Routes>
     </BrowserRouter>
+    </ProductsContext.Provider>
   );
 };
 

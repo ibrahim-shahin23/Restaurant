@@ -1,22 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState ,useContext} from 'react';
 import { Container } from 'react-bootstrap';
 import './Home.css';
 import Cart from '../Cart';
+import { ProductsContext } from '../App';
+
+
 const Home = (props) => {
+  const products = useContext(ProductsContext)
+  console.log(products);
   return (
     <Container>
       <h1>Home Page</h1>
-      <table class="table">
+      <table className="table">
         <thead>
           <tr>
-            <th scope="col">#</th>
-            <th scope="col">Item</th>
-            <th scope="col">Price</th>
-            <th scope="col">Add to Cart</th>
+            <th key="id" scope="col">#</th>
+            <th key="name" scope="col">Item</th>
+            <th key="price" scope="col">Price</th>
+            <th key="add" scope="col">Add to Cart</th>
           </tr>
         </thead>
         <tbody>
-          {props.products.map((product) => {
+          {products.map((product) => {
             return (
               <tr>
                 <th scope="row">{product.id}</th>

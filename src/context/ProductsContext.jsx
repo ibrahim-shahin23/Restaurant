@@ -1,9 +1,12 @@
 import React from 'react'
 
-export default function ProductDisplay() {
+
+const ProductsProvider = () => {
   return (
     <div>
       
     </div>
   )
 }
+
+export default ProductsProvider

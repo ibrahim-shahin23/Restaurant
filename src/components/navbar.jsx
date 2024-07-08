@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-const Navbar = (props) => {
+import { ProductsContext } from '../context/ProductsContext';
+
+const Navbar = () => {
+  const {state} = useContext(ProductsContext);
   return (
     <nav className="navbar navbar-dark bg-dark">
       <div className="container-fluid">
@@ -39,7 +42,7 @@ const Navbar = (props) => {
             </li>
           </ul>
         </div>
-        <span className="badge badge-primary">{props.productCount}</span>
+        <span className="badge badge-primary">{state.products.filter((product) => product.isInCart).length}</span>
       </div>
     </nav>
   );

@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 import { Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { ProductsContext } from './App';
+import { ProductsContext } from '../context/ProductsContext';
 
-const Admin = (props) => {
-  const products = useContext(ProductsContext)
+const Admin = () => {
+  const {state,handleDelete} = useContext(ProductsContext)
   const navigate = useNavigate();
   const handlEdit = (product) => {
     navigate(`/productform/${product.id}`);
@@ -40,7 +40,7 @@ const Admin = (props) => {
           </tr>
         </thead>
         <tbody>
-          {products.map((product) => {
+          {state.products.map((product) => {
             return (
               <tr key = {product.id}>
                 <th scope="row">{product.id}</th>
@@ -55,7 +55,7 @@ const Admin = (props) => {
                 <td>
                   <i
                     className="bi bi-trash-fill"
-                    onClick={() => props.onDelete(product)}
+                    onClick={() => handleDelete(product)}
                   ></i>
                 </td>
               </tr>

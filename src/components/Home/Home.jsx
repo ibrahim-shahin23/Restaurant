@@ -2,18 +2,17 @@ import React, { useState ,useContext} from 'react';
 import { Container } from 'react-bootstrap';
 import './Home.css';
 import Cart from '../Cart';
-import { ProductsContext } from '../App';
+import { ProductsContext } from '../../context/ProductsContext';
 
 
-const Home = (props) => {
-  const products = useContext(ProductsContext)
-  console.log(products);
+const Home = () => {
+  const {state,handleCartChange} = useContext(ProductsContext)
   return (
     <Container>
       <h1>Home Page</h1>
       <table className="table">
         <thead>
-          <tr>
+          <tr key="head">
             <th key="id" scope="col">#</th>
             <th key="name" scope="col">Item</th>
             <th key="price" scope="col">Price</th>
@@ -21,14 +20,14 @@ const Home = (props) => {
           </tr>
         </thead>
         <tbody>
-          {products.map((product) => {
+          {state.products.map((product) => {
             return (
-              <tr>
+              <tr key={product.id}>
                 <th scope="row">{product.id}</th>
                 <td>{product.name}</td>
                 <td>{product.price}</td>
                 <td>
-                  <Cart product={product} onClick={props.handleCart}/>
+                  <Cart product={product} onClick={handleCartChange}/>
                 </td>
               </tr>
             );
